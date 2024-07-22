@@ -1,0 +1,110 @@
+# TokenSage.py
+
+import json
+import random
+
+class TokenSage:
+    def __init__(self, platform_name, supported_tokens):
+        self.platform_name = platform_name
+        self.supported_tokens = supported_tokens
+        self.token_data = {}
+
+    def display_platform_info(self):
+        """Displays the platform name and supported tokens."""
+        print(f"Platform Name: {self.platform_name}")
+        print("Supported Tokens:")
+        for token in self.supported_tokens:
+            print(f"- {token}")
+
+    def create_token(self, token_name, total_supply, decimals):
+        """
+        Creates a new token with specified parameters.
+        """
+        if token_name in self.token_data:
+            print(f"Token '{token_name}' already exists.")
+            return
+        
+        self.token_data[token_name] = {
+            'total_supply': total_supply,
+            'decimals': decimals,
+            'current_supply': total_supply,
+            'transactions': []
+        }
+        print(f"Token '{token_name}' created successfully.")
+
+    def transfer_tokens(self, token_name, amount, from_user, to_user):
+        """
+        Simulates token transfer between users.
+        """
+        if token_name not in self.token_data:
+            print(f"Token '{token_name}' does not exist.")
+            return
+
+        token = self.token_data[token_name]
+        if amount > token['current_supply']:
+            print(f"Insufficient supply of token '{token_name}'.")
+            return
+        
+        # Simulate transaction record
+        transaction = {
+            'from': from_user,
+            'to': to_user,
+            'amount': amount,
+            'transaction_id': random.randint(100000, 999999)
+        }
+        token['transactions'].append(transaction)
+        token['current_supply'] -= amount
+        
+        print(f"Transferred {amount} of '{token_name}' from {from_user} to {to_user}.")
+
+    def get_token_info(self, token_name):
+        """
+        Retrieves information about a specific token.
+        """
+        if token_name not in self.token_data:
+            print(f"Token '{token_name}' does not exist.")
+            return None
+        
+        return self.token_data[token_name]
+
+    def generate_report(self):
+        """
+        Generates a comprehensive report of all tokens and their details.
+        """
+        report = {
+            'platform_name': self.platform_name,
+            'tokens': self.token_data
+        }
+        return report
+
+    def display_report(self, report):
+        """Displays the generated report."""
+        print("Generated Token Report:")
+        print(json.dumps(report, indent=4))
+
+# Example usage
+if __name__ == "__main__":
+    platform_name = "TokenSage"
+    supported_tokens = ["ERC20", "ERC721", "ERC1155"]
+
+    # Create an instance of TokenSage
+    token_sage = TokenSage(platform_name, supported_tokens)
+    
+    # Display platform info
+    token_sage.display_platform_info()
+
+    # Create tokens
+    token_sage.create_token("TokenA", 1000000, 18)
+    token_sage.create_token("TokenB", 500000, 8)
+
+    # Transfer tokens
+    token_sage.transfer_tokens("TokenA", 1000, "User1", "User2")
+    token_sage.transfer_tokens("TokenB", 500, "User3", "User4")
+
+    # Get token info
+    token_info = token_sage.get_token_info("TokenA")
+    print("TokenA Info:", json.dumps(token_info, indent=4))
+
+    # Generate and display report
+    report = token_sage.generate_report()
+    token_sage.display_report(report)
